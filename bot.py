@@ -86,7 +86,7 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         percent = int((idx / total) * 100)
         if percent > shown_percent:
             shown_percent = percent
-            await progress_message.edit_text(f"🔄 Đang xử lý: {shown_percent}%")
+            await progress_message.edit_text(f"🔄 Đang xử lý: {shown_percent}% ({idx}/{total} dòng)")
     
         if stop_flags.get(chat_id):
             await update.message.reply_text("⏹ Đã dừng theo yêu cầu.")
