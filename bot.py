@@ -62,7 +62,12 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ws = wb.active
     keywords = user_data[chat_id]["keywords"]
 
-    for row in ws.iter_rows(min_row=2, max_col=1):
+    progress_message = await update.message.reply_text("🔄 Đang xử lý file...")
+
+    total = ws.max_row - 1
+    match_count = 0
+
+    for idx, row in enumerate(ws.iter_rows(min_row=2, max_col=1), start=1):
         if stop_flags.get(chat_id):
             await update.message.reply_text("⏹ Đã dừng theo yêu cầu.")
             return
@@ -71,12 +76,19 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         words = set(text.replace(",", " ").replace(".", " ").replace("!", " ").replace("?", " ").split())
         found = any(kw in words for kw in keywords)
         row[0].offset(column=1).value = "SOS: Nó kia kìa nó kia kìa ÐTH" if found else ""
+        if found:
+            match_count += 1
+
+        if idx % max(1, total // 20) == 0 or idx == total:
+            percent = int((idx / total) * 100)
+            await progress_message.edit_text(f"🔄 Đang xử lý: {percent}%")
 
     output = BytesIO()
     wb.save(output)
     output.seek(0)
+
+    await progress_message.edit_text(f"✅ Hoàn tất: {total} dòng, {match_count} dòng gắn SOS.")
     await update.message.reply_document(document=InputFile(output, filename="Checked_Results.xlsx"))
-    await update.message.reply_text("✅ Đã xử lý xong.")
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
