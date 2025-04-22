@@ -95,7 +95,7 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     wb.save(output)
     output.seek(0)
 
-    await progress_message.edit_text(f"✅ Xong! {match_count}/{total} dòng có từ khóa khớp.")
+    await progress_message.edit_text(f"✅ Xong! {match_count}/{total} Tiêu đề có từ vi phạm.")
     await update.message.reply_document(document=InputFile(output, filename="Checked_Results.xlsx"))
 
     # Dọn dẹp dữ liệu tạm
