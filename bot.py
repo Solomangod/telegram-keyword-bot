@@ -64,7 +64,9 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     progress_message = await update.message.reply_text("🔄 Đang xử lý file...")
 
-    total = ws.max_row - 1
+    
+    total = sum(1 for row in ws.iter_rows(min_row=2, max_col=1) if row[0].value)
+    
     match_count = 0
 
     for idx, row in enumerate(ws.iter_rows(min_row=2, max_col=1), start=1):
@@ -75,7 +77,7 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text = str(cell).lower() if cell else ""
         words = set(text.replace(",", " ").replace(".", " ").replace("!", " ").replace("?", " ").split())
         found = any(kw in words for kw in keywords)
-        row[0].offset(column=1).value = "SOS: Nó kia kìa nó kia kìa ÐTH" if found else ""
+        row[0].offset(column=6).value = "SOS: Nó kia kìa nó kia kìa ÐTH" if found else ""
         if found:
             match_count += 1
 
