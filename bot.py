@@ -81,7 +81,15 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if found:
             match_count += 1
 
-        if idx % max(1, total // 20) == 0 or idx == total:
+        
+        percent = int((idx / total) * 100)
+        if percent > 100:
+            percent = 100
+        if percent != 100 and idx % max(1, total // 20) == 0:
+            await progress_message.edit_text(f"🔄 Đang xử lý: {percent}%")
+        elif idx == total:
+            await progress_message.edit_text(f"🔄 Đang xử lý: 100%")
+    
             percent = int((idx / total) * 100)
             await progress_message.edit_text(f"🔄 Đang xử lý: {percent}%")
 
