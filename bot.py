@@ -69,25 +69,7 @@ async def handle_excel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     match_count = 0
 
-    
-    shown_percent = 0
     for idx, row in enumerate(ws.iter_rows(min_row=2, max_col=1), start=1):
-        if stop_flags.get(chat_id):
-            await update.message.reply_text("⏹ Đã dừng theo yêu cầu.")
-            return
-        cell = row[0].value
-        text = str(cell).lower() if cell else ""
-        words = set(text.replace(",", " ").replace(".", " ").replace("!", " ").replace("?", " ").split())
-        found = any(kw in words for kw in keywords)
-        row[0].offset(column=6).value = "SOS: Nó kia kìa nó kia kìa ÐTH" if found else ""
-        if found:
-            match_count += 1
-
-        percent = int((idx / total) * 100)
-        if percent > shown_percent:
-            shown_percent = percent
-            await progress_message.edit_text(f"🔄 Đang xử lý: {shown_percent}% ({idx}/{total} dòng)")
-    
         if stop_flags.get(chat_id):
             await update.message.reply_text("⏹ Đã dừng theo yêu cầu.")
             return
